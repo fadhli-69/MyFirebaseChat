@@ -48,6 +48,7 @@ dependencies {
     implementation(libs.androidx.recyclerview)
     implementation(libs.firebase.auth)
     implementation(libs.google.googleid)
+    implementation(libs.firebase.database)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -56,5 +57,8 @@ dependencies {
 
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services.auth)
+
+    implementation(libs.firebase.ui.database)
+    implementation(libs.glide)
 
 }
