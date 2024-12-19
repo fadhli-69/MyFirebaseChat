@@ -1,10 +1,12 @@
 package com.dicoding.myfirebasechat
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.credentials.ClearCredentialStateRequest
 import androidx.credentials.CredentialManager
@@ -19,6 +21,7 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
 import java.util.Date
+import android.Manifest
 
 class MainActivity : AppCompatActivity() {
 
@@ -46,6 +49,10 @@ class MainActivity : AppCompatActivity() {
         db = Firebase.database
 
         val messagesRef = db.reference.child(MESSAGES_CHILD)
+
+        if (Build.VERSION.SDK_INT >= 33) {
+            requestNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
 
         binding.sendButton.setOnClickListener {
             val friendlyMessage = Message(
@@ -76,9 +83,20 @@ class MainActivity : AppCompatActivity() {
         val options = FirebaseRecyclerOptions.Builder<Message>()
             .setQuery(messagesRef, Message::class.java)
             .build()
-        adapter = FirebaseMessageAdapter(options, firebaseUser?.displayName)
+        adapter = FirebaseMessageAdapter(options, firebaseUser.displayName)
         binding.messageRecyclerView.adapter = adapter
     }
+
+    private val requestNotificationPermissionLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted: Boolean ->
+            if (isGranted) {
+                Toast.makeText(this, "Notifications permission granted", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "Notifications permission rejected", Toast.LENGTH_SHORT).show()
+            }
+        }
 
     public override fun onResume() {
         super.onResume()
